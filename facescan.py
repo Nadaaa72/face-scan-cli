@@ -24,10 +24,8 @@ import os
 import sys
 
 
-# ---------------------------------------------------------------------------
-# Small pure helpers. These are kept free of OpenCV so the unit tests can run
+# These are kept free of OpenCV so the unit tests can run
 # on any machine, even one without the vision libraries installed.
-# ---------------------------------------------------------------------------
 
 def frame_filename(out_dir, frame_number):
     """frames/frame_000090.jpg style names, so files sort in video order."""
@@ -73,10 +71,9 @@ def build_report(frame_count, saved_count, total_faces, best_frame,
     }
 
 
-# ---------------------------------------------------------------------------
+
 # The video pipeline. Heavy imports live inside the functions so that simply
 # importing this file stays cheap and the tests above never need them.
-# ---------------------------------------------------------------------------
 
 def _load_detector():
     """Build the face detector. keep_all means every face, not just the biggest."""
