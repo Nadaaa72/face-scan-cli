@@ -1,0 +1,25 @@
+# videos and generated output stay out of git
+*.mp4
+*.avi
+*.mov
+*.mkv
+results/
+frames*/
+faces_found*/
+*.json
+
+# the original learning scripts, media and extracted stills: private, never published
+_learning/
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# editors / os
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
