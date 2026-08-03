@@ -5,6 +5,14 @@ builds a report. It can also write a copy of the video with all faces blurred,
 which is useful any time footage needs to be shared without exposing the
 people in it.
 
+![A frame with five detected faces outlined in green](docs/scan-example.jpg)
+
+*The busiest frame of the test film, marked up by the tool. Note the two
+overlapping boxes on the left-hand face: the detector fires more than once on
+a face at an angle, and the tool does not yet merge overlapping boxes, so that
+frame's count of five is really four people. See
+[Known limitations](#known-limitations).*
+
 ## What it does
 
 1. Walks through the video and samples one frame out of every N.
@@ -38,11 +46,19 @@ Nearly 40% of those detections were under 65px wide, which is the kind of
 thing the report exists to surface. "491 faces" on its own would suggest the
 footage is far more usable than it actually is.
 
-Privacy blur mode, which processes every frame rather than sampling:
+## Privacy blur
+
+`--blur` writes a copy of the whole video with every detected face blurred out,
+so footage can be shared without exposing the people in it:
 
 ```
 python facescan.py tears_of_steel_720p.mov --blur
 ```
+
+![The same frame before and after blurring, side by side](docs/blur-example.jpg)
+
+*Original on the left, `--blur` output on the right.* Unlike the scan, this
+mode looks at every single frame rather than sampling.
 
 ## Install
 
@@ -70,6 +86,7 @@ The first run downloads the MTCNN model weights automatically.
 facescan.py             the whole tool: helpers, scan_video, blur_video, CLI
 requirements.txt        what to install
 tests/test_facescan.py  unit tests for the pure logic
+docs/                   the images used in this README
 ```
 
 ## Tests
@@ -131,16 +148,38 @@ tests written specifically because the failure is silent.
 can afford to, but a blur that switches off for 29 frames out of 30 protects
 nobody. Same detector, deliberately different loop.
 
+## Known limitations
+
+Worth being straight about what this does not do yet:
+
+- **Overlapping boxes are not merged.** The detector can return two or three
+  boxes for one face when it is turned away or partly covered, and every one
+  of them is counted. This is visible in the first image above, and it means
+  face counts are an upper bound rather than a count of people.
+- **It counts faces, it does not recognise them.** The same person walking
+  through forty frames is forty faces, not one person seen forty times.
+- **CPU only, so it is not real time.** Detection is the bottleneck, at
+  roughly 15 frames per second on my machine. Sampling is what makes it
+  practical, not raw speed.
+- **The blur is a rectangle**, so it has hard edges and covers a little more
+  than the face itself.
+
 ## Notes
 
-The example above is reproducible: [Tears of Steel](https://mango.blender.org/)
-is released under CC BY 3.0 and the 720p file is a
+The example is reproducible: [Tears of Steel](https://mango.blender.org/) is
+released under CC BY 3.0 and the 720p file is a
 [direct download](https://download.blender.org/demo/movies/ToS/tears_of_steel_720p.mov).
 It is a useful test case because it is live action, so there are real faces in
 it, and because anyone can run the same command and check the numbers.
 
 Video files and generated frames are kept out of git by the `.gitignore`, so
 the tool is safe to run inside this folder.
+
+## Credits
+
+The images and the example report in this README come from
+[Tears of Steel](https://mango.blender.org/), (CC) Blender Foundation, used
+under [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/).
 
 ## License
 
